@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">My Chess App</string>
+
+    <string name="select_starting_position">Select your starting position!</string>
+    <string name="select_ending_position">Select your ending position!</string>
+    <string name="reset_button">Reset all</string>
+    <string name="desired_chess_board_size">Desired chess board size</string>
+    <string name="enter_chess_board_size_hint">Enter a number from 6 to 16</string>
+    <string name="desired_number_of_moves">Desired number of moves</string>
+    <string name="enter_number_of_moves_hint">Enter a number from 1 to 6</string>
+    <string name="no_paths">Sadly, no paths found!</string>
+
+</resources>

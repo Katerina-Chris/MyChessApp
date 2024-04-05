@@ -1,0 +1,9 @@
+<resources>
+
+    <dimen name="info_text_size">22sp</dimen>
+    <dimen name="margin_vertical">32dp</dimen>
+    <dimen name="reset_button_text_size">12sp</dimen>
+    <dimen name="edit_text_margin">10dp</dimen>
+    <dimen name="edit_text_margin_start">20dp</dimen>
+    <dimen name="edit_text_description_text_size">16sp</dimen>
+</resources>
