@@ -16,6 +16,7 @@ class ChessFragment : Fragment() {
     private lateinit var viewBinding: FragmentChessBinding
 
     private val chessViewModel: ChessViewModel by viewModels()
+    private val dialogUtils by lazy { DialogUtils() }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -37,6 +38,16 @@ class ChessFragment : Fragment() {
         observeMoves()
         observePaths()
         observeStartOver()
+        observeLoadingState()
+    }
+
+    private fun observeLoadingState() {
+        chessViewModel.loadingState.observe(viewLifecycleOwner) {
+            when (it) {
+                ChessViewModel.State.LoadingState -> dialogUtils.showLoading(requireContext())
+                ChessViewModel.State.Content -> dialogUtils.hideLoading()
+            }
+        }
     }
 
     private fun setUpChessView() {
@@ -201,6 +212,7 @@ class ChessFragment : Fragment() {
         private const val DEFAULT_BOARD_SIZE = "6"
         private const val DEFAULT_MOVES = "3"
         private const val MIN_NUMBER_OF_MOVES = 1
+
         // due to complex calculations of possible paths especially for max board size(16)
         private const val MAX_NUMBER_OF_MOVES = 7
         private const val MAX_BOARD_SIZE = 16

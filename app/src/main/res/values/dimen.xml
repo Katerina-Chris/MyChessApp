@@ -6,4 +6,5 @@
     <dimen name="edit_text_margin">10dp</dimen>
     <dimen name="edit_text_margin_start">20dp</dimen>
     <dimen name="edit_text_description_text_size">16sp</dimen>
+    <dimen name="loader_padding">20dp</dimen>
 </resources>
