@@ -54,7 +54,7 @@ class FindSolutionHelper @Inject constructor() : FindSolution {
         return@withContext Solution(pathList)
     }
 
-    private fun possiblePath(col: Int, row: Int): Path {
+    fun possiblePath(col: Int, row: Int): Path {
         val positions = mutableListOf<Position>()
         for (direction in Direction.entries) {
             when (direction) {
@@ -85,7 +85,7 @@ class FindSolutionHelper @Inject constructor() : FindSolution {
         }.toList())
     }
 
-    private fun isValid(row: Int, col: Int, size: Int): Boolean {
+    fun isValid(row: Int, col: Int, size: Int): Boolean {
         val validRow = row >= 0 && row <= (size - 1)
         val validCol = col >= 0 && col <= (size - 1)
         return validCol && validRow
