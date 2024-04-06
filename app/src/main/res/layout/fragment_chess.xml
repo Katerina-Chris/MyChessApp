@@ -44,10 +44,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="@dimen/edit_text_margin"
-        app:layout_constraintBottom_toTopOf="@id/chess_board_size_container"
+        app:layout_constraintBottom_toTopOf="@id/reset_button"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/reset_button" />
+        app:layout_constraintTop_toBottomOf="@id/chess_board_size_container" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/reset_button"

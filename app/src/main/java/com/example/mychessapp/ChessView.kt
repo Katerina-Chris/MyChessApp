@@ -9,36 +9,36 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
+import com.example.mychessapp.ChessFragment.Companion.MIN_BOARD_SIZE
 
 class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val paint = Paint()
 
-    var chessViewEventHandler: ChessViewEventHandler? = null
-    var drawCol: Int? = null
-    var drawRow: Int? = null
-
     private var cellSide = 0f
-    private var dimensionX = 0f
-    private var dimensionY = 0f
-    var defaultChessboardSize: Int = 6
-    var positionsToHighlight: List<List<Position>?>? = null
+    private var canvasX = 0f
+    private var canvasY = 0f
+
+    var chessViewEventHandler: ChessViewEventHandler? = null
+    var startingPosition: Position? = null
+    var minBoardSize: Int = MIN_BOARD_SIZE
+    var positionsToHighlight: Solution? = null
 
     override fun onDraw(canvas: Canvas) {
         this.layoutParams.height = width
         this.layoutParams.width = width
         this.requestLayout()
         val chessBoardSide = width * 0.95f
-        cellSide = chessBoardSide / defaultChessboardSize.toFloat()
-        dimensionX = (width - chessBoardSide) / 2f
-        dimensionY = (height - chessBoardSide) / 2f
+        cellSide = chessBoardSide / minBoardSize.toFloat()
+        canvasX = (width - chessBoardSide) / 2f
+        canvasY = (height - chessBoardSide) / 2f
 
         drawChessBoard(canvas)
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
-        val col = ((event.x - dimensionX) / cellSide).toInt()
-        val row = ((event.y - dimensionY) / cellSide).toInt()
+        val col = ((event.x - canvasX) / cellSide).toInt()
+        val row = ((event.y - canvasY) / cellSide).toInt()
         if (event.action == MotionEvent.ACTION_DOWN) {
             if (positionsToHighlight == null) {
                 chessViewEventHandler?.selectedPosition(col, row)
@@ -58,19 +58,14 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             (height - width) / 2f + width,
             paint
         )
-        for (row in 0 until defaultChessboardSize) {
-            for (col in 0 until defaultChessboardSize) {
-
+        for (row in 0 until minBoardSize) {
+            for (col in 0 until minBoardSize) {
                 drawChessRect(canvas, row, col)
-
-                drawCol?.let { drawCol ->
-                    drawRow?.let { drawRow ->
-                        if (drawRow == row && drawCol == col) {
-                            drawHorse(canvas, drawRow, drawCol)
-                        }
+                startingPosition?.let {
+                    if (it.row == row && it.col == col) {
+                        drawKnightPiece(canvas, it.row, it.col)
                     }
                 }
-
             }
         }
     }
@@ -79,10 +74,10 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         paint.color = if ((row + col) % 2 == 1) Color.DKGRAY else Color.LTGRAY
 
         val rect = RectF(
-            dimensionX + row * cellSide,
-            dimensionY + col * cellSide,
-            dimensionX + (row + 1) * cellSide,
-            dimensionY + (col + 1) * cellSide
+            canvasX + row * cellSide,
+            canvasY + col * cellSide,
+            canvasX + (row + 1) * cellSide,
+            canvasY + (col + 1) * cellSide
         )
         canvas.drawRect(rect, paint)
 
@@ -93,10 +88,10 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         // check if rect need to be highlighted
         positionsToHighlight?.let {
-            it.forEach { positions ->
-                positions?.let {
-                    for (position in positions.indices) {
-                        if (positions[position].col == col && positions[position].row == row) {
+            it.paths.forEach { positions ->
+                positions.let {
+                    for (position in positions.moves.indices) {
+                        if (positions.moves[position].col == col && positions.moves[position].row == row) {
                             paint.color = Color.RED
                             canvas.drawRect(
                                 rect,
@@ -111,14 +106,14 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         }
     }
 
-    private fun drawHorse(canvas: Canvas, col: Int, row: Int) {
+    private fun drawKnightPiece(canvas: Canvas, col: Int, row: Int) {
         val piece = BitmapFactory.decodeResource(resources, R.drawable.white_horse)
         canvas.drawBitmap(
             piece, null, RectF(
-                dimensionX + col * cellSide,
-                dimensionY + row * cellSide,
-                dimensionX + (col + 1) * cellSide,
-                dimensionY + (row + 1) * cellSide
+                canvasX + col * cellSide,
+                canvasY + row * cellSide,
+                canvasX + (col + 1) * cellSide,
+                canvasY + (row + 1) * cellSide
             ), paint
         )
     }

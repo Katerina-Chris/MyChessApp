@@ -9,7 +9,9 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.example.mychessapp.databinding.FragmentChessBinding
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ChessFragment : Fragment() {
     private lateinit var viewBinding: FragmentChessBinding
 
@@ -26,9 +28,10 @@ class ChessFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+
         setUpChessView()
         setUpEditTexts()
-        setUpResetButton()
+        setUpResetAllButton()
         observeSelectedPosition()
         observeBoardSize()
         observeMoves()
@@ -95,31 +98,30 @@ class ChessFragment : Fragment() {
         }
     }
 
-    private fun setUpResetButton() {
+    private fun setUpResetAllButton() {
         viewBinding.resetButton.setOnClickListener {
             viewBinding.chessView.apply {
-                drawRow = null
-                drawCol = null
-                defaultChessboardSize = MIN_BOARD_SIZE
+                startingPosition = null
+                minBoardSize = MIN_BOARD_SIZE
                 positionsToHighlight = null
                 invalidate()
             }
             chessViewModel.resetSelectedPosition()
             chessViewModel.setMoves(DEFAULT_NUMBER_OF_MOVES)
             chessViewModel.setChessBoardSize(MIN_BOARD_SIZE)
+            chessViewModel.resetPreferences()
             viewBinding.chessBoardSizeContainer.editText.setText(DEFAULT_BOARD_SIZE)
             viewBinding.movesContainer.editText.setText(DEFAULT_MOVES)
         }
     }
 
     private fun observeSelectedPosition() {
-        chessViewModel.selectedStartingPosition.observe(viewLifecycleOwner) { position ->
+        chessViewModel.selectedPosition.observe(viewLifecycleOwner) { position ->
             if (position != null) {
                 viewBinding.selectPositionInfoText.text = getString(R.string.select_ending_position)
                 viewBinding.chessView.apply {
-                    if (drawRow == null && drawCol == null) {
-                        drawRow = position.row
-                        drawCol = position.col
+                    if (startingPosition == null) {
+                        startingPosition = position
                         invalidate()
                     }
                 }
@@ -133,12 +135,12 @@ class ChessFragment : Fragment() {
     private fun observeBoardSize() {
         chessViewModel.chessBoardSize.observe(viewLifecycleOwner) { size ->
             viewBinding.chessView.apply {
-                defaultChessboardSize = size
-                drawRow = null
-                drawCol = null
+                minBoardSize = size
+                startingPosition = null
                 positionsToHighlight = null
                 invalidate()
             }
+            viewBinding.chessBoardSizeContainer.editText.setText(size.toString())
             chessViewModel.resetSelectedPosition()
         }
     }
@@ -146,20 +148,23 @@ class ChessFragment : Fragment() {
     private fun observeMoves() {
         chessViewModel.moves.observe(viewLifecycleOwner) {
             viewBinding.chessView.apply {
-                drawRow = null
-                drawCol = null
+                startingPosition = null
                 positionsToHighlight = null
                 invalidate()
             }
+            viewBinding.movesContainer.editText.setText(it.toString())
             chessViewModel.resetSelectedPosition()
         }
     }
 
     private fun observePaths() {
-        chessViewModel.paths.observe(viewLifecycleOwner) {
-            if (!it.isNullOrEmpty()) {
+        chessViewModel.solution.observe(viewLifecycleOwner) { paths ->
+            if (paths.paths.isNotEmpty()) {
                 viewBinding.chessView.apply {
-                    positionsToHighlight = it
+                    positionsToHighlight = paths
+                    startingPosition =
+                        if (chessViewModel.selectedPosition.value == null) chessViewModel.position
+                        else chessViewModel.selectedPosition.value
                     invalidate()
                 }
             } else {
@@ -169,11 +174,11 @@ class ChessFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 viewBinding.chessView.apply {
-                    drawRow = null
-                    drawCol = null
+                    startingPosition = null
+
                     invalidate()
                 }
-                chessViewModel.resetSelectedPosition()
+                chessViewModel.setStartOver()
             }
         }
     }
@@ -183,22 +188,23 @@ class ChessFragment : Fragment() {
             if (it) {
                 viewBinding.chessView.apply {
                     positionsToHighlight = null
-                    drawRow = null
-                    drawCol = null
+                    startingPosition = null
                     invalidate()
                 }
                 chessViewModel.resetSelectedPosition()
+                chessViewModel.resetPositionAndPathsPreferences()
             }
         }
     }
 
     companion object {
         private const val DEFAULT_BOARD_SIZE = "6"
-        const val MIN_BOARD_SIZE = 6
-        private const val MAX_BOARD_SIZE = 16
         private const val DEFAULT_MOVES = "3"
         private const val MIN_NUMBER_OF_MOVES = 1
-        private const val MAX_NUMBER_OF_MOVES = 6
+        // due to complex calculations of possible paths especially for max board size(16)
+        private const val MAX_NUMBER_OF_MOVES = 7
+        private const val MAX_BOARD_SIZE = 16
+        const val MIN_BOARD_SIZE = 6
         const val DEFAULT_NUMBER_OF_MOVES = 3
     }
 }
