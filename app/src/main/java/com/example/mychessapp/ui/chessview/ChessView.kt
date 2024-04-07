@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.ui.chessview
 
 import android.content.Context
 import android.graphics.BitmapFactory
@@ -9,8 +9,12 @@ import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
-import com.example.mychessapp.ChessFragment.Companion.MIN_BOARD_SIZE
+import com.example.mychessapp.R
+import com.example.mychessapp.ui.ChessFragment.Companion.MIN_BOARD_SIZE
+import com.example.mychessapp.ui.Position
+import com.example.mychessapp.ui.Solution
 
+// Custom view representing the chessboard
 class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) {
 
     private val paint = Paint()
@@ -19,15 +23,19 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     private var canvasX = 0f
     private var canvasY = 0f
 
+    // Event handler for chess board interactions
     var chessViewEventHandler: ChessViewEventHandler? = null
     var startingPosition: Position? = null
     var minBoardSize: Int = MIN_BOARD_SIZE
+
+    // Containing paths to highlight
     var positionsToHighlight: Solution? = null
 
     override fun onDraw(canvas: Canvas) {
         this.layoutParams.height = width
         this.layoutParams.width = width
         this.requestLayout()
+
         val chessBoardSide = width * 0.95f
         cellSide = chessBoardSide / minBoardSize.toFloat()
         canvasX = (width - chessBoardSide) / 2f
@@ -37,8 +45,10 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
     }
 
     override fun onTouchEvent(event: MotionEvent): Boolean {
+        // Calculate the touched cell
         val col = ((event.x - canvasX) / cellSide).toInt()
         val row = ((event.y - canvasY) / cellSide).toInt()
+
         if (event.action == MotionEvent.ACTION_DOWN) {
             if (positionsToHighlight == null) {
                 chessViewEventHandler?.selectedPosition(col, row)
@@ -51,6 +61,7 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
     private fun drawChessBoard(canvas: Canvas) {
         paint.color = Color.BLACK
+        // Draw the chessboard background
         canvas.drawRect(
             0f,
             (height - width) / 2f,
@@ -58,9 +69,11 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
             (height - width) / 2f + width,
             paint
         )
+
         for (row in 0 until minBoardSize) {
             for (col in 0 until minBoardSize) {
                 drawChessRect(canvas, row, col)
+                // Draw the knight piece if the position is the starting position
                 startingPosition?.let {
                     if (it.row == row && it.col == col) {
                         drawKnightPiece(canvas, it.row, it.col)
@@ -70,6 +83,7 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
         }
     }
 
+    // Draw each cell
     private fun drawChessRect(canvas: Canvas, row: Int, col: Int) {
         paint.color = if ((row + col) % 2 == 1) Color.DKGRAY else Color.LTGRAY
 
@@ -83,10 +97,10 @@ class ChessView(context: Context?, attrs: AttributeSet?) : View(context, attrs) 
 
         val paintText = Paint()
         paintText.color = Color.DKGRAY
-        paintText.textSize = 50F
+        paintText.textSize = 36F
         paintText.textAlign = Paint.Align.CENTER
 
-        // check if rect need to be highlighted
+        // Highlight the cell
         positionsToHighlight?.let {
             it.paths.forEach { positions ->
                 positions.let {

@@ -3,6 +3,10 @@ package com.example.mychessapp
 import android.app.Application
 import android.content.Context
 import android.content.SharedPreferences
+import com.example.mychessapp.helpers.FindSolution
+import com.example.mychessapp.helpers.implementation.FindSolutionHelper
+import com.example.mychessapp.helpers.Preferences
+import com.example.mychessapp.helpers.implementation.PreferencesHelper
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -27,7 +31,6 @@ object AppModule {
     }
 
     @Provides
-    @Singleton
     fun provideFindSolution(): FindSolution {
         return FindSolutionHelper()
     }

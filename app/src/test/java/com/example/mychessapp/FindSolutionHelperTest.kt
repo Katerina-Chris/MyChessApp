@@ -1,5 +1,7 @@
 package com.example.mychessapp
 
+import com.example.mychessapp.helpers.implementation.FindSolutionHelper
+import com.example.mychessapp.ui.Position
 import junit.framework.TestCase.assertEquals
 import kotlinx.coroutines.runBlocking
 import org.junit.Test

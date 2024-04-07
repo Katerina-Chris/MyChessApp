@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.ui
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -8,7 +8,10 @@ import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.example.mychessapp.R
 import com.example.mychessapp.databinding.FragmentChessBinding
+import com.example.mychessapp.utilities.DialogUtils
+import com.example.mychessapp.utilities.hideKeyboard
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -28,7 +31,6 @@ class ChessFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
 
         setUpChessView()
         setUpEditTexts()
@@ -57,6 +59,7 @@ class ChessFragment : Fragment() {
     }
 
     private fun setUpEditTexts() {
+        // Set up editText for board size
         viewBinding.chessBoardSizeContainer.apply {
             labelText.text = getString(R.string.desired_chess_board_size)
             editText.hint = getString(R.string.enter_chess_board_size_hint)
@@ -83,6 +86,7 @@ class ChessFragment : Fragment() {
             }
         }
 
+        // Set up editText for number of moves
         viewBinding.movesContainer.apply {
             labelText.text = getString(R.string.desired_number_of_moves)
             editText.hint = getString(R.string.enter_number_of_moves_hint)
@@ -109,6 +113,7 @@ class ChessFragment : Fragment() {
         }
     }
 
+    // Reset chessView and preferences
     private fun setUpResetAllButton() {
         viewBinding.resetButton.setOnClickListener {
             viewBinding.chessView.apply {
@@ -120,7 +125,7 @@ class ChessFragment : Fragment() {
             chessViewModel.resetSelectedPosition()
             chessViewModel.setMoves(DEFAULT_NUMBER_OF_MOVES)
             chessViewModel.setChessBoardSize(MIN_BOARD_SIZE)
-            chessViewModel.resetPreferences()
+            chessViewModel.resetAllPreferences()
             viewBinding.chessBoardSizeContainer.editText.setText(DEFAULT_BOARD_SIZE)
             viewBinding.movesContainer.editText.setText(DEFAULT_MOVES)
         }
@@ -179,6 +184,7 @@ class ChessFragment : Fragment() {
                     invalidate()
                 }
             } else {
+                // Show toast and start over
                 Toast.makeText(
                     activity,
                     getString(R.string.no_paths),
@@ -213,8 +219,9 @@ class ChessFragment : Fragment() {
         private const val DEFAULT_MOVES = "3"
         private const val MIN_NUMBER_OF_MOVES = 1
 
-        // due to complex calculations of possible paths especially for max board size(16)
+        // Due to complex calculations of possible paths, especially for max board size(16)
         private const val MAX_NUMBER_OF_MOVES = 7
+
         private const val MAX_BOARD_SIZE = 16
         const val MIN_BOARD_SIZE = 6
         const val DEFAULT_NUMBER_OF_MOVES = 3

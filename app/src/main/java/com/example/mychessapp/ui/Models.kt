@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.ui
 
 import java.io.Serializable
 

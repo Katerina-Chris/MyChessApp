@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.helpers
 
 interface Preferences {
     fun saveInt(name:String, value: Int)

@@ -14,7 +14,7 @@
         android:theme="@style/Theme.MyChessApp"
         tools:targetApi="31">
         <activity
-            android:name=".ChessActivity"
+            android:name=".ui.ChessActivity"
             android:screenOrientation="portrait"
             android:exported="true">
             <intent-filter>

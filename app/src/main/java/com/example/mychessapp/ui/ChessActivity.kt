@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.ui
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
@@ -14,6 +14,4 @@ class ChessActivity : AppCompatActivity() {
         viewBinding = ActivityChessBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
     }
-
-
 }

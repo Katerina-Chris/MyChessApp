@@ -1,4 +1,4 @@
-package com.example.mychessapp
+package com.example.mychessapp.utilities
 
 import android.app.AlertDialog
 import android.content.Context
@@ -9,6 +9,7 @@ class DialogUtils {
 
     private var dialog: AlertDialog? = null
 
+    // Displays loading dialog
     fun showLoading(context: Context) {
         val builder = AlertDialog.Builder(context)
         val loadingBinding = ViewLoaderBinding.inflate(LayoutInflater.from(context))
@@ -19,6 +20,7 @@ class DialogUtils {
         dialog?.show()
     }
 
+    // Hides ths loading dialog if it's showing
     fun hideLoading() {
         dialog?.dismiss()
     }

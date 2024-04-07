@@ -1,5 +1,10 @@
-package com.example.mychessapp
+package com.example.mychessapp.helpers.implementation
 
+import com.example.mychessapp.ui.Direction
+import com.example.mychessapp.ui.Path
+import com.example.mychessapp.ui.Position
+import com.example.mychessapp.ui.Solution
+import com.example.mychessapp.helpers.FindSolution
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -43,17 +48,21 @@ class FindSolutionHelper @Inject constructor() : FindSolution {
             currentMoves++
         }
 
+        // remove the starting position
         paths.forEach {
             it.removeAt(0)
             if (it.size < userInputMoves) it.clear()
         }
+        // filter out empty paths
         paths = paths.filter { it.isNotEmpty() }.toMutableList()
 
+        // convert paths to Path
         val pathList = paths.map { Path(it) }
 
         return@withContext Solution(pathList)
     }
 
+    // Creates a possible path for the knight piece given a position
     fun possiblePath(col: Int, row: Int): Path {
         val positions = mutableListOf<Position>()
         for (direction in Direction.entries) {
@@ -80,11 +89,13 @@ class FindSolutionHelper @Inject constructor() : FindSolution {
             }
         }
 
+        // Filter out invalid positions
         return Path(positions.filter {
             isValid(it.row, it.col, 20)
         }.toList())
     }
 
+    // Checks if the position is valid within the chessboard boundaries
     fun isValid(row: Int, col: Int, size: Int): Boolean {
         val validRow = row >= 0 && row <= (size - 1)
         val validCol = col >= 0 && col <= (size - 1)
